@@ -1,10 +1,10 @@
 <?php
 
-namespace Supsign\Alltron;
+namespace Supsign\Also;
 
 use Illuminate\Support\ServiceProvider;
 
-class AlltronServiceProvider extends ServiceProvider
+class AlsoServiceProvider extends ServiceProvider
 {
 
     public function boot() 

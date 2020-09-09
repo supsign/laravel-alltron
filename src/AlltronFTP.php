@@ -1,16 +1,16 @@
 <?php
 
-namespace Supsign\Alltron;
+namespace Supsign\Also;
 
 use Config;
 
-class AlltronFTP
+class AlsoFTP
 {
 // Noch Auslagern in .env und Config
    
 
   protected
-  $ftp;
+  $ftp = null;
 
     public function __construct() {
       
@@ -19,7 +19,7 @@ class AlltronFTP
            $password = '4KbddyPN';
        
         $this->ftp = new \FtpClient\FtpClient();
-        $this->ftp->connect($host, true, '990');
+        $this->ftp->connect($host);
         $this->ftp->login($login, $password);
 
         return $this;
