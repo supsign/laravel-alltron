@@ -1,7 +1,7 @@
 {
-    "name": "supsign/laravel-mf-soap",
-    "description": "Laravel Extension for Handling SOAP for myFactory",
-    "keywords": ["composer", "script", "myFactory"],
+    "name": "supsign/alltron-price-import",
+    "description": "Laravel Extension for Alltron Price Import",
+    "keywords": ["composer", "script", "alltron"],
     "license": "MIT",
     "authors": [
     {
@@ -10,16 +10,16 @@
     }],
     "autoload": {
         "psr-4": {
-            "Supsign\\LaravelMfSoap\\": "src/"
+            "Supsign\\AlltronPriceImport\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Supsign\\LaravelMfSoap\\LaravelMfSoapServiceProvider"
+                "Supsign\\AlltronPriceImport\\AlltronPriceImportServiceProvider"
             ],
             "aliases": {
-                "MyFactorySoapApi": "Supsign\\LaravelMfSoap\\MyFactorySoapApi"
+                "AlltronPriceImport": "Supsign\\AlltronPriceImport\\MyFactorySoapApi"
             }
         }
     }

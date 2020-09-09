@@ -1,10 +1,10 @@
 <?php
 
-namespace Supsign\LaravelMfSoap;
+namespace Supsign\AlltronPriceImport;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelMfSoapServiceProvider extends ServiceProvider
+class AlltronPriceImportServiceProvider extends ServiceProvider
 {
 
     public function boot() 
