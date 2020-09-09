@@ -1,10 +1,10 @@
 <?php
 
-namespace Supsign\Also;
+namespace Supsign\Alltron;
 
 use Config;
 
-class AlsoImportPrices extends AlsoFTP
+class AlltronImportPrices extends AlltronFTP
 {
 
 

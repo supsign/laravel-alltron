@@ -1,10 +1,10 @@
 <?php
 
-namespace Supsign\Also;
+namespace Supsign\Alltron;
 
 use Config;
 
-class AlsoFTP
+class AlltronFTP
 {
 // Noch Auslagern in .env und Config
    

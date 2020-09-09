@@ -1,7 +1,7 @@
 {
-    "name": "supsign/also",
-    "description": "Laravel Extension for Also",
-    "keywords": ["composer", "script", "also"],
+    "name": "supsign/alltron",
+    "description": "Laravel Extension for Alltron",
+    "keywords": ["composer", "script", "alltron"],
     "license": "MIT",
     "authors": [{
         "name": "Fabrizio Cocco",
@@ -9,18 +9,18 @@
     }],
     "autoload": {
         "psr-4": {
-            "Supsign\\Also\\": "src/"
+            "Supsign\\Alltron\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Supsign\\Also\\AlsoServiceProvider"
+                "Supsign\\Alltron\\AlltronServiceProvider"
             ],
             "aliases": {
-                "AlsoEDI": "Supsign\\Also\\AlsoEDI",
-                "AlsoImportProducts": "Supsign\\Also\\AlsoImportProducts",
-                "AlsoImportPrices": "Supsign\\Also\\AlsoImportPrices"
+                "AlltronEDI": "Supsign\\Alltron\\AlltronEDI",
+                "AlltronImportProducts": "Supsign\\Alltron\\AlltronImportProducts",
+                "AlltronImportPrices": "Supsign\\Alltron\\AlltronImportPrices"
 
             }
         }
