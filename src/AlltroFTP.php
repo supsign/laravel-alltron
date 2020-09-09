@@ -1,10 +1,10 @@
 <?php
 
-namespace Supsign\AlltronPriceImport;
+namespace Supsign\Alltron;
 
 use Config;
 
-class AlltronPriceImport
+class AlltronFTP
 {
 // Noch Auslagern in .env und Config
    

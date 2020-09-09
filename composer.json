@@ -1,10 +1,9 @@
 {
-    "name": "supsign/alltron-price-import",
-    "description": "Laravel Extension for Alltron Price Import",
+    "name": "supsign/alltron",
+    "description": "Laravel Extension for Alltron",
     "keywords": ["composer", "script", "alltron"],
     "license": "MIT",
-    "authors": [
-    {
+    "authors": [{
         "name": "Fabrizio Cocco",
         "email": "fabrizio.cocco@supsign.ch"
     }],
@@ -16,10 +15,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Supsign\\AlltronPriceImport\\AlltronPriceImportServiceProvider"
+                "Supsign\\Alltron\\AlltronServiceProvider"
             ],
             "aliases": {
-                "AlltronPriceImport": "Supsign\\AlltronPriceImport\\MyFactorySoapApi"
+                "AlltronFTP": "Supsign\\Alltron\\AlltronFTP"
             }
         }
     },
