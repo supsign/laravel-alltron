@@ -4,7 +4,7 @@ namespace Supsign\Alltron;
 
 use Config;
 
-class AlltronImportProducts extends AlltronFTP
+class AlltronImportPrices extends AlltronFTP
 {
 
 
