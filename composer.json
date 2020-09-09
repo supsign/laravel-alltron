@@ -18,7 +18,10 @@
                 "Supsign\\Alltron\\AlltronServiceProvider"
             ],
             "aliases": {
-                "AlltronFTP": "Supsign\\Alltron\\AlltronFTP"
+                "AlltronEDI": "Supsign\\Alltron\\AlltronEDI",
+                "AlltronImportProducts": "Supsign\\Alltron\\AlltronImportProducts",
+                "AlltronImportPrices": "Supsign\\Alltron\\AlltronImportPrices"
+
             }
         }
     },
