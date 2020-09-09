@@ -10,7 +10,7 @@ class AlltronFTP
    
 
   protected
-  $ftp;
+  $ftp = null;
 
     public function __construct() {
       
@@ -19,7 +19,7 @@ class AlltronFTP
            $password = '4KbddyPN';
        
         $this->ftp = new \FtpClient\FtpClient();
-        $this->ftp->connect($host, true, '990');
+        $this->ftp->connect($host);
         $this->ftp->login($login, $password);
 
         return $this;
