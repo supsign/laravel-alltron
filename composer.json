@@ -3,9 +3,6 @@
     "description": "Laravel Extension for Alltron Price Import",
     "keywords": ["composer", "script", "alltron"],
     "license": "MIT",
-    "require" {
-        "nicolab/php-ftp-client": "^1.5"
-    },
     "authors": [
     {
         "name": "Fabrizio Cocco",
@@ -25,5 +22,8 @@
                 "AlltronPriceImport": "Supsign\\AlltronPriceImport\\MyFactorySoapApi"
             }
         }
+    },
+    "require": {
+        "nicolab/php-ftp-client": "^1.5"
     }
 }
