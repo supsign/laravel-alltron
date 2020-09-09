@@ -9,7 +9,7 @@
     }],
     "autoload": {
         "psr-4": {
-            "Supsign\\AlltronPriceImport\\": "src/"
+            "Supsign\\Alltron\\": "src/"
         }
     },
     "extra": {
