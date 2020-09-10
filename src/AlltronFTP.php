@@ -2,45 +2,45 @@
 
 namespace Supsign\Alltron;
 
-use Config;
-
 class AlltronFTP
 {
-// Noch Auslagern in .env und Config
-   
+    protected
+        $ftp = null,
+        $response = null;
 
-  protected
-  $ftp = null;
-
-    public function __construct() {
-      
-           $host = 'ftp.competec.ch';
-           $login = 'A273237';
-           $password = '4KbddyPN';
-       
+    public function __construct() 
+    {
         $this->ftp = new \FtpClient\FtpClient();
-        $this->ftp->connect($host);
-        $this->ftp->login($login, $password);
+        $this->ftp->connect(env('ALLTRON_FTP_HOST'));
+        $this->ftp->login(env('ALLTRON_FTP_LOGIN'), env('ALLTRON_FTP_PASSWORD'));
 
         return $this;
     }
 
+    protected function download($file)
+    {
+        file_put_contents(storage_path().'/'.$file, $this->ftp->getContent($file));
 
-        public function setFile($file){
-            return $this;
-        }
+        return $this;
+    }
 
+    public function downloadPriceData()
+    {
+        return $this->download('PreisdatenV2.XML');
+    }
 
-    public function importPrices(){
+    protected function importPrices()
+    {
 
     }
 
-    protected function importPrice(){
+    protected function importPrice()
+    {
 
     }
 
+    public function test() 
+    {
 
-
-
- 
+    }
 }
