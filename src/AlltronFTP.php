@@ -5,8 +5,7 @@ namespace Supsign\Alltron;
 class AlltronFTP
 {
     protected
-        $ftp = null,
-        $response = null;
+        $ftp = null;
 
     public function __construct() 
     {
@@ -28,6 +27,12 @@ class AlltronFTP
     {
         return $this->download('PreisdatenV2.XML');
     }
+
+    public function downloadProductData()
+    {
+        return $this->download('ArtikeldatenV2.xml');
+    }
+
 
     protected function importPrices()
     {
