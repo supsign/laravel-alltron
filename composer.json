@@ -4,8 +4,8 @@
     "keywords": ["composer", "script", "alltron"],
     "license": "MIT",
     "authors": [{
-        "name": "Fabrizio Cocco",
-        "email": "fabrizio.cocco@supsign.ch"
+        "name": "Florian Ratz",
+        "email": "florian.ratz@supsign.ch"
     }],
     "autoload": {
         "psr-4": {
