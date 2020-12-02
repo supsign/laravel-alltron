@@ -21,7 +21,6 @@
                 "AlltronEDI": "Supsign\\Alltron\\AlltronEDI",
                 "AlltronImportProducts": "Supsign\\Alltron\\AlltronImportProducts",
                 "AlltronImportPrices": "Supsign\\Alltron\\AlltronImportPrices"
-
             }
         }
     },
