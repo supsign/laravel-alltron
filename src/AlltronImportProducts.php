@@ -3,9 +3,14 @@
 namespace Supsign\Alltron;
 
 use Config;
+use Illuminate\Support\Facades\Storage;
 
-class AlltronImportProducts extends AlltronFTP
+class AlltronImportProducts
 {
+	protected $sourceFile = null;
 
- 
+	public function __construct()
+	{
+
+	}
 }
