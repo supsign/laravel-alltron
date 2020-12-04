@@ -7,6 +7,9 @@
         "name": "Florian Ratz",
         "email": "florian.ratz@supsign.ch"
     }],
+    "require": {
+        "acfbentveld/xml": "^3.0"
+    },
     "autoload": {
         "psr-4": {
             "Supsign\\Alltron\\": "src/"

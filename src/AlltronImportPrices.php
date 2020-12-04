@@ -11,6 +11,5 @@ class AlltronImportPrices
 
 	public function __construct()
 	{
-		$this->sourceFile = Storage::path('imports/PreisdatenV2.XML');
 	}
 }
