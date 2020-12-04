@@ -4,12 +4,19 @@ namespace Supsign\Alltron;
 
 use Config;
 use Illuminate\Support\Facades\Storage;
+use Supsign\LaravelXmlReader\XmlReader;
 
-class AlltronImportPrices
+class AlltronImportPrices extends XmlReader
 {
-	protected $sourceFile = null;
+	protected 
+		$dataKey = 'item',
+		$sourceFile = 'PreisdatenV2.XML';
 
-	public function __construct()
+	public function import() 
 	{
+		var_dump(
+			count($this->getData())
+		);
+
 	}
 }
