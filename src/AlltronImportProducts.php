@@ -25,18 +25,39 @@ class AlltronImportProducts extends XmlReader
 		return $this->productData->$key;
 	}
 
+	protected function getProductsWeight()
+	{
+		switch ($this->getProductDataValue('ProductShippingWeightUnit')) {
+			case 'kg': return $this->getProductDataValue('ProductShippingWeight');
+			case 'g': return $this->getProductDataValue('ProductShippingWeight') / 1000;
+		}
+	}
+
 	public function import() 
 	{
 		$i = 0;
 
 		foreach ($this->getData() AS $this->productData) {
-			var_dump($this->productData);
+			var_dump(
+				$this->productData
+			);
 
 			if (!$ean = $this->getProductDataValue('EAN')) {
 				continue;
 			}
 
-			$product = Product::updateOrCreate(['EAN' => $ean]);
+			$product = Product::updateOrCreate(
+				['EAN' => $ean],
+				[
+					'warranty' => $this->getProductDataValue('Warranty'),
+					'height' => $this->getProductDataValue('height'),
+					'width' => $this->getProductsWeight('width'),
+					'length' => $this->getProductDataValue('length'),
+					'weight_brutto' => $this->getProductsWeight(),
+				]
+			);
+
+
 			$description = ProductDescription::updateOrCreate(
 				['product_id' => $product->id],
 				[
@@ -56,7 +77,7 @@ class AlltronImportProducts extends XmlReader
 
 			$i++;
 
-			if ($i === 30)
+			if ($i === 100)
 				break;
 		}
 
