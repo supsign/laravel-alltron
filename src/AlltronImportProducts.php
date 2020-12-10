@@ -38,10 +38,6 @@ class AlltronImportProducts extends XmlReader
 		$i = 0;
 
 		foreach ($this->getData() AS $this->productData) {
-			var_dump(
-				$this->productData
-			);
-
 			if (!$ean = $this->getProductDataValue('EAN')) {
 				continue;
 			}
