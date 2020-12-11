@@ -72,7 +72,6 @@ class AlltronImportProducts extends XmlReader
 					if ($category->ignore) {
 						$ignore = true;
 					}
-					
 				}
 			}
 
