@@ -2,6 +2,8 @@
 
 namespace Supsign\Alltron;
 
+use App\Category;
+use App\CategoryProduct;
 use App\Product;
 use App\ProductDescription;
 use App\ProductSupplier;
@@ -42,10 +44,39 @@ class AlltronImportProducts extends XmlReader
 
 	public function import() 
 	{
-		$i = 0;
+		$catCount = Category::all()->count();
 
 		foreach ($this->getData() AS $this->productData) {
+			// var_dump($this->productData);
+			// break;
+
 			if (!$ean = $this->getProductDataValue('EAN')) {
+				continue;
+			}
+
+			$ignore = false;
+
+			if (isset($this->productData->Categories)) {
+				$categoryId = null;
+
+				foreach ($this->productData->Categories->Category AS $category) {
+					$categoryData = ['name' => $category];
+
+					if (isset($categoryId)) {
+						$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
+					}
+
+					$category = Category::updateOrCreate($categoryData);
+					$categoryId = $category->id;
+
+					if ($category->ignore) {
+						$ignore = true;
+					}
+					
+				}
+			}
+
+			if ($ignore OR $catCount === 0) {
 				continue;
 			}
 
@@ -59,7 +90,6 @@ class AlltronImportProducts extends XmlReader
 					'weight_brutto' => $this->getProductsWeight(),
 				]
 			);
-
 
 			$description = ProductDescription::updateOrCreate(
 				['product_id' => $product->id],
@@ -78,12 +108,14 @@ class AlltronImportProducts extends XmlReader
 				]
 			);
 
-			$i++;
-
-			if ($i === 100)
-				break;
+			if (isset($categoryId)) {
+				CategoryProduct::updateOrCreate([
+					'product_id' => $product->id,
+					'category_id' => $categoryId
+				]);
+			}
 		}
 
-		var_dump($i);
+		echo 'done';
 	}
 }
