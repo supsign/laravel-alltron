@@ -8,13 +8,20 @@ use App\ProductSupplier;
 use Config;
 use Illuminate\Support\Facades\Storage;
 use Supsign\LaravelXmlReader\XmlReader;
+use Supsign\LaravelMfSoap\MyFactorySoapApi;
 
 class AlltronImportProducts extends XmlReader
 {
 	protected 
 		$dataKey = 'product',
 		$productData = null,
+		$soap = null,
 		$sourceFile = 'StandardV2_DE.xml';
+
+	public function __construct()
+	{
+		$this->soap = new MyFactorySoapApi;
+	}
 
 	protected function getProductDataValue($key)
 	{
