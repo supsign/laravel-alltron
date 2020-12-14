@@ -46,13 +46,11 @@ class AlltronImportProducts extends XmlReader
 	{
 		$catCount = Category::all()->count();
 
-		foreach ($this->getData() AS $this->productData) {
-			// var_dump($this->productData);
-			// break;
+		$i = 1;
 
-			if (!$ean = $this->getProductDataValue('EAN')) {
-				continue;
-			}
+		foreach ($this->getData() AS $this->productData) {
+			if ($i++ === 25)
+				break;
 
 			$ignore = false;
 
@@ -79,16 +77,30 @@ class AlltronImportProducts extends XmlReader
 				continue;
 			}
 
-			$product = Product::updateOrCreate(
-				['EAN' => $ean],
-				[
-					'warranty' => $this->getProductDataValue('Warranty'),
-					'height' => $this->getProductDataValue('height'),
-					'width' => $this->getProductsWeight('width'),
-					'length' => $this->getProductDataValue('length'),
-					'weight_brutto' => $this->getProductsWeight(),
-				]
+			$productSupplier = ProductSupplier::firstOrNew(
+				['supplier_product_id' => $this->getProductDataValue('ProductId'), 'supplier_id' => 1],
+				['stock' => $this->getProductDataValue('Inventory')]
 			);
+
+			$productData = array(
+				'EAN' => $this->getProductDataValue('EAN'),
+				'warranty' => $this->getProductDataValue('Warranty'),
+				'height' => $this->getProductDataValue('height'),
+				'width' => $this->getProductsWeight('width'),
+				'length' => $this->getProductDataValue('length'),
+				'weight_brutto' => $this->getProductsWeight(),
+				'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
+			);
+
+			if ($productSupplier->isDirty()) {
+				$product = Product::create($productData); 
+			} else {
+				$product = Product::find($productSupplier->product_id)->fill($productData);
+				$product->save();
+			}
+
+			$productSupplier->product_id = $product->id;
+			$productSupplier->save();
 
 			$description = ProductDescription::updateOrCreate(
 				['product_id' => $product->id],
@@ -96,14 +108,6 @@ class AlltronImportProducts extends XmlReader
 					'name' => $this->getProductDataValue('ProductName'),
 					'subtitle' => $this->getProductDataValue('Productsubtitle'),
 					'description' => $this->getProductDataValue('ProductLongDescription'),
-				]
-			);
-
-			$productSupplier = ProductSupplier::updateOrCreate(
-				['product_id' => $product->id, 'supplier_id' => 1],
-				[
-					'supplier_product_id' => $this->getProductDataValue('ProductId'),
-					'stock' => $this->getProductDataValue('Inventory'),
 				]
 			);
 
