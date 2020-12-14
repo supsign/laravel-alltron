@@ -49,9 +49,6 @@ class AlltronImportProducts extends XmlReader
 		$i = 1;
 
 		foreach ($this->getData() AS $this->productData) {
-			if ($i++ === 25)
-				break;
-
 			$ignore = false;
 
 			if (isset($this->productData->Categories)) {
@@ -78,12 +75,15 @@ class AlltronImportProducts extends XmlReader
 			}
 
 			$productSupplier = ProductSupplier::firstOrNew(
-				['supplier_product_id' => $this->getProductDataValue('ProductId'), 'supplier_id' => 1],
+				[
+					'supplier_product_id' => $this->getProductDataValue('ProductId'), 
+					'supplier_id' => 1
+				],
 				['stock' => $this->getProductDataValue('Inventory')]
 			);
 
 			$productData = array(
-				'EAN' => $this->getProductDataValue('EAN'),
+				'ean' => $this->getProductDataValue('EAN'),
 				'warranty' => $this->getProductDataValue('Warranty'),
 				'height' => $this->getProductDataValue('height'),
 				'width' => $this->getProductsWeight('width'),
@@ -92,7 +92,7 @@ class AlltronImportProducts extends XmlReader
 				'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
 			);
 
-			if ($productSupplier->isDirty()) {
+			if (is_null($productSupplier->product_id)) {
 				$product = Product::create($productData); 
 			} else {
 				$product = Product::find($productSupplier->product_id)->fill($productData);
@@ -117,8 +117,10 @@ class AlltronImportProducts extends XmlReader
 					'category_id' => $categoryId
 				]);
 			}
+
+			$i++;
 		}
 
-		echo 'done';
+		echo $i.' rows imported or updated';
 	}
 }
