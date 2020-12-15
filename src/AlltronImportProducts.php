@@ -61,7 +61,7 @@ class AlltronImportProducts extends XmlReader
 						$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
 					}
 
-					$category = Category::updateOrCreate($categoryData);
+					$category = Category::firstOrCreate($categoryData);
 					$categoryId = $category->id;
 
 					if ($category->ignore) {
@@ -107,12 +107,12 @@ class AlltronImportProducts extends XmlReader
 				[
 					'name' => $this->getProductDataValue('ProductName'),
 					'subtitle' => $this->getProductDataValue('Productsubtitle'),
-					'description' => $this->getProductDataValue('ProductLongDescription'),
+					'teaser' => $this->getProductDataValue('ProductLongDescription'),
 				]
 			);
 
 			if (isset($categoryId)) {
-				CategoryProduct::updateOrCreate([
+				CategoryProduct::firstOrCreate([
 					'product_id' => $product->id,
 					'category_id' => $categoryId
 				]);
