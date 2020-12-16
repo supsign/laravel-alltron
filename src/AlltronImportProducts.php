@@ -53,34 +53,21 @@ class AlltronImportProducts extends XmlReader
 		}
 	}
 
-	public function writeMfIds() 
+	public function importSuppliers()
 	{
-		$i = 0;
-
-        foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
-            if (!$productSupplierInformation->ProductPurchaseNumber)
-                continue;
-
-            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
-                ->with(['product'])
-                ->first();
-
-            if ($productSupplier) {
-                $product = $productSupplier->product;
-                $product->mf_product_id = $productSupplierInformation->ProductID;
-                $product->save();
-                $i++;
+            foreach ($this->soap->getSuppliers() AS $supplier) {
+                Supplier::updateOrCreate(
+                    ['my_factory_id' => (int)filter_var($supplier->SupplierNumber, FILTER_SANITIZE_NUMBER_INT)],
+                    ['name' => $supplier->Matchcode]
+                );
             }
-        }
-
-        echo $i.' rows found in MF'.PHP_EOL;
-
-        return $this;
 	}
 
 	public function import() 
 	{
-		$this->downloadFile();
+		$this
+			->importSuppliers()
+			->downloadFile();
 
 		$catCount = Category::all()->count();
 
@@ -162,5 +149,30 @@ class AlltronImportProducts extends XmlReader
 
 		return $this;
 		// return $this->writeMfIds();
+	}
+
+	protected function writeMfIds() 
+	{
+		$i = 0;
+
+        foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
+            if (!$productSupplierInformation->ProductPurchaseNumber)
+                continue;
+
+            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
+                ->with(['product'])
+                ->first();
+
+            if ($productSupplier) {
+                $product = $productSupplier->product;
+                $product->mf_product_id = $productSupplierInformation->ProductID;
+                $product->save();
+                $i++;
+            }
+        }
+
+        echo $i.' rows found in MF'.PHP_EOL;
+
+        return $this;
 	}
 }
