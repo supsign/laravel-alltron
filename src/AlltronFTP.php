@@ -10,4 +10,13 @@ class AlltronFTP extends FtpConnector
     {
         return parent::__construct('ALLTRON');
     }
+
+    public function downloadFile()
+    {
+    	$ret = parent::downloadFile();
+
+    	echo 'download complete'.PHP_EOL;
+
+    	return $ret;
+    }
 }

@@ -44,6 +44,8 @@ class AlltronImportProducts extends XmlReader
 
 	protected function writeMfIds() 
 	{
+		$i = 0;
+
         foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
             if (!$productSupplierInformation->ProductPurchaseNumber)
                 continue;
@@ -54,17 +56,22 @@ class AlltronImportProducts extends XmlReader
 
             if ($productSupplier) {
                 $product = $productSupplier->product;
-                $product->mf_product_number = $productSupplierInformation->ProductID;
+                $product->mf_product_id = $productSupplierInformation->ProductID;
                 $product->save();
+                $i++;
             }
         }
+
+        echo $i.' rows found in MF'.PHP_EOL;
+
+        return $this;
 	}
 
 	public function import() 
 	{
 		$catCount = Category::all()->count();
 
-		$i = 1;
+		$i = 0;
 
 		foreach ($this->getData() AS $this->productData) {
 			$ignore = false;
@@ -92,12 +99,10 @@ class AlltronImportProducts extends XmlReader
 				continue;
 			}
 
-			$productSupplier = ProductSupplier::firstOrNew(
-				[
-					'supplier_product_id' => $this->getProductDataValue('ProductId'), 
-					'supplier_id' => 1
-				]
-			);
+			$productSupplier = ProductSupplier::firstOrNew([
+				'supplier_product_id' => $this->getProductDataValue('ProductId'), 
+				'supplier_id' => 1
+			]);
 
 			$productData = array(
 				'ean' => $this->getProductDataValue('EAN'),
@@ -140,8 +145,8 @@ class AlltronImportProducts extends XmlReader
 			$i++;
 		}
 
-		$this->writeMfIds();
+		echo $i.' rows imported or updated'.PHP_EOL;
 
-		echo $i.' rows imported or updated';
+		return $this->writeMfIds();
 	}
 }
