@@ -15,7 +15,7 @@ class AlltronFTP extends FtpConnector
     {
     	$ret = parent::downloadFile();
 
-    	echo 'download complete'.PHP_EOL;
+    	echo $this->localFile.' download complete'.PHP_EOL;
 
     	return $ret;
     }
