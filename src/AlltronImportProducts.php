@@ -56,12 +56,14 @@ class AlltronImportProducts extends XmlReader
 
 	public function importSuppliers()
 	{
-            foreach ($this->soap->getSuppliers() AS $supplier) {
-                Supplier::updateOrCreate(
-                    ['my_factory_id' => (int)filter_var($supplier->SupplierNumber, FILTER_SANITIZE_NUMBER_INT)],
-                    ['name' => $supplier->Matchcode]
-                );
-            }
+        foreach ($this->soap->getSuppliers() AS $supplier) {
+            Supplier::updateOrCreate(
+                ['my_factory_id' => (int)filter_var($supplier->SupplierNumber, FILTER_SANITIZE_NUMBER_INT)],
+                ['name' => $supplier->Matchcode]
+            );
+        }
+
+        return $this;
 	}
 
 	public function import() 
@@ -148,8 +150,7 @@ class AlltronImportProducts extends XmlReader
 
 		echo $i.' rows imported or updated'.PHP_EOL;
 
-		return $this;
-		// return $this->writeMfIds();
+		return $this->writeMfIds();
 	}
 
 	protected function writeMfIds() 
