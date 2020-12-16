@@ -42,6 +42,24 @@ class AlltronImportProducts extends XmlReader
 		}
 	}
 
+	protected function writeMfIds() 
+	{
+        foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
+            if (!$productSupplierInformation->ProductPurchaseNumber)
+                continue;
+
+            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
+                ->with(['product'])
+                ->first();
+
+            if ($productSupplier) {
+                $product = $productSupplier->product;
+                $product->mf_product_number = $productSupplierInformation->ProductID;
+                $product->save();
+            }
+        }
+	}
+
 	public function import() 
 	{
 		$catCount = Category::all()->count();
@@ -78,8 +96,7 @@ class AlltronImportProducts extends XmlReader
 				[
 					'supplier_product_id' => $this->getProductDataValue('ProductId'), 
 					'supplier_id' => 1
-				],
-				['stock' => $this->getProductDataValue('Inventory')]
+				]
 			);
 
 			$productData = array(
@@ -100,6 +117,8 @@ class AlltronImportProducts extends XmlReader
 			}
 
 			$productSupplier->product_id = $product->id;
+			$productSupplier->stock = $this->getProductDataValue('Inventory');
+			$productSupplier->last_seen = now();
 			$productSupplier->save();
 
 			$description = ProductDescription::updateOrCreate(
@@ -120,6 +139,8 @@ class AlltronImportProducts extends XmlReader
 
 			$i++;
 		}
+
+		$this->writeMfIds();
 
 		echo $i.' rows imported or updated';
 	}
