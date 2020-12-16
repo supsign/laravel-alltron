@@ -9,6 +9,7 @@ use App\ProductDescription;
 use App\ProductSupplier;
 use Config;
 use Illuminate\Support\Facades\Storage;
+use Supsign\Alltron\AlltronFTP;
 use Supsign\LaravelXmlReader\XmlReader;
 use Supsign\LaravelMfSoap\MyFactorySoapApi;
 
@@ -23,6 +24,16 @@ class AlltronImportProducts extends XmlReader
 	public function __construct()
 	{
 		$this->soap = new MyFactorySoapApi;
+	}
+
+	public function downloadFile()
+	{
+	    (new AlltronFTP)
+	        ->setLocalFile(Storage::path('imports/'.$this->sourceFile))
+	        ->setRemoteFile($this->sourceFile)
+	        ->downloadFile();
+
+	    return $this;
 	}
 
 	protected function getProductDataValue($key)
@@ -42,7 +53,7 @@ class AlltronImportProducts extends XmlReader
 		}
 	}
 
-	protected function writeMfIds() 
+	public function writeMfIds() 
 	{
 		$i = 0;
 
@@ -69,6 +80,8 @@ class AlltronImportProducts extends XmlReader
 
 	public function import() 
 	{
+		$this->downloadFile();
+
 		$catCount = Category::all()->count();
 
 		$i = 0;
@@ -147,6 +160,7 @@ class AlltronImportProducts extends XmlReader
 
 		echo $i.' rows imported or updated'.PHP_EOL;
 
-		return $this->writeMfIds();
+		return $this;
+		// return $this->writeMfIds();
 	}
 }
