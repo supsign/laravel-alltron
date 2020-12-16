@@ -7,6 +7,7 @@ use App\CategoryProduct;
 use App\Product;
 use App\ProductDescription;
 use App\ProductSupplier;
+use App\Supplier;
 use Config;
 use Illuminate\Support\Facades\Storage;
 use Supsign\Alltron\AlltronFTP;
