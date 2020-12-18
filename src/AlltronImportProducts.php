@@ -9,7 +9,6 @@ use App\Product;
 use App\ProductDescription;
 use App\ProductSupplier;
 use App\Supplier;
-use Config;
 use Illuminate\Support\Facades\Storage;
 use Pdp\TopLevelDomains;
 
@@ -118,11 +117,11 @@ class AlltronImportProducts extends AlltronImport
 
 			$i++;
 
-			// if ($i == 50)
+			// if ($i == 10)
 			// 	break;
 
 			// var_dump(
-			// 	$this->getManufacturerName()
+			// 	$this->productData
 			// );
 			// echo '<hr>';
 			// continue;
