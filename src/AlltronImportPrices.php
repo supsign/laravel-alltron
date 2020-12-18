@@ -4,9 +4,8 @@ namespace Supsign\Alltron;
 
 use Config;
 use Illuminate\Support\Facades\Storage;
-use Supsign\LaravelXmlReader\XmlReader;
 
-class AlltronImportPrices extends XmlReader
+class AlltronImportPrices extends AlltronImport
 {
 	protected 
 		$dataKey = 'item',

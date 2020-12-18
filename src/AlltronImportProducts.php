@@ -4,37 +4,42 @@ namespace Supsign\Alltron;
 
 use App\Category;
 use App\CategoryProduct;
+use App\Manufacturer;
 use App\Product;
 use App\ProductDescription;
 use App\ProductSupplier;
 use App\Supplier;
 use Config;
 use Illuminate\Support\Facades\Storage;
-use Supsign\Alltron\AlltronFTP;
-use Supsign\LaravelXmlReader\XmlReader;
-use Supsign\LaravelMfSoap\MyFactorySoapApi;
+use Pdp\TopLevelDomains;
 
-class AlltronImportProducts extends XmlReader
+class AlltronImportProducts extends AlltronImport
 {
 	protected 
 		$dataKey = 'product',
 		$productData = null,
-		$soap = null,
-		$sourceFile = 'StandardV2_DE.xml';
+		$sourceFile = 'StandardV2_DE.xml',
+		$topLevelDomains = null;
 
 	public function __construct()
 	{
-		$this->soap = new MyFactorySoapApi;
+		$this->topLevelDomains = TopLevelDomains::fromPath('https://data.iana.org/TLD/tlds-alpha-by-domain.txt');
+
+		return parent::__construct();
 	}
 
-	public function downloadFile()
+	protected function getManufacturerName()
 	{
-	    (new AlltronFTP)
-	        ->setLocalFile(Storage::path('imports/'.$this->sourceFile))
-	        ->setRemoteFile($this->sourceFile)
-	        ->downloadFile();
+		if (is_null($this->getProductDataValue('ManufacturerProductUrl'))) {
+			return null;
+		}
 
-	    return $this;
+		$name = ucfirst($this
+			->topLevelDomains->resolve(parse_url($this->getProductDataValue('ManufacturerProductUrl'), PHP_URL_HOST))
+				->secondLevelDomain()
+					->toString());
+
+		return $name ?: null;
 	}
 
 	protected function getProductDataValue($key)
@@ -48,10 +53,23 @@ class AlltronImportProducts extends XmlReader
 
 	protected function getProductsWeight()
 	{
+		if (is_null($this->getProductDataValue('ProductShippingWeight'))) {
+			return null;
+		}
+
 		switch ($this->getProductDataValue('ProductShippingWeightUnit')) {
 			case 'kg': return $this->getProductDataValue('ProductShippingWeight');
 			case 'g': return $this->getProductDataValue('ProductShippingWeight') / 1000;
 		}
+	}
+
+	public function import() 
+	{
+		return $this
+			->importSuppliers()
+			->downloadFile()
+			->importProducts()
+			->writeMfIds();
 	}
 
 	public function importSuppliers()
@@ -66,12 +84,8 @@ class AlltronImportProducts extends XmlReader
         return $this;
 	}
 
-	public function import() 
+	public function importProducts() 
 	{
-		$this
-			->importSuppliers()
-			->downloadFile();
-
 		$catCount = Category::all()->count();
 
 		$i = 0;
@@ -102,6 +116,17 @@ class AlltronImportProducts extends XmlReader
 				continue;
 			}
 
+			$i++;
+
+			// if ($i == 50)
+			// 	break;
+
+			// var_dump(
+			// 	$this->getManufacturerName()
+			// );
+			// echo '<hr>';
+			// continue;
+
 			$productSupplier = ProductSupplier::firstOrNew([
 				'supplier_product_id' => $this->getProductDataValue('ProductId'), 
 				'supplier_id' => 1
@@ -115,7 +140,15 @@ class AlltronImportProducts extends XmlReader
 				'length' => $this->getProductDataValue('length'),
 				'weight_brutto' => $this->getProductsWeight(),
 				'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
+				'manufacturer_number' => $this->getProductDataValue('MPN'),
+				'manufacturer_url' => $this->getProductDataValue('ManufacturerProductUrl'),
 			);
+
+			if ($this->getManufacturerName()) {
+				$productData['manufacturer_id'] = Manufacturer::firstOrCreate([
+					'name' => $this->getManufacturerName()
+				])->id;
+			}
 
 			if (is_null($productSupplier->product_id)) {
 				$product = Product::create($productData); 
@@ -144,16 +177,14 @@ class AlltronImportProducts extends XmlReader
 					'category_id' => $categoryId
 				]);
 			}
-
-			$i++;
 		}
 
 		echo $i.' rows imported or updated'.PHP_EOL;
 
-		return $this->writeMfIds();
+		return $this;
 	}
 
-	protected function writeMfIds() 
+	public function writeMfIds() 
 	{
 		$i = 0;
 
