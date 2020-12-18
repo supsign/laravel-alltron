@@ -15,6 +15,8 @@ class AlltronImportPrices extends AlltronImport
 
 	public function import() 
 	{
+		$this->downloadFile();
+
 		$i = 0;
 
 		foreach ($this->getData() AS $entry) {
