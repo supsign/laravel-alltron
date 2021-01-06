@@ -80,6 +80,8 @@ class AlltronImportProducts extends AlltronImport
             );
         }
 
+        echo 'Lieferanten importiert.'.PHP_EOL;
+
         return $this;
 	}
 
