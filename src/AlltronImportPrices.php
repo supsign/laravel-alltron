@@ -41,9 +41,6 @@ class AlltronImportPrices extends AlltronImport
 			]);
 
 			$i++;
-
-			// if ($i == 500)
-			// 	break;	
 		}
 
 		echo $i.' prices imported or update'.PHP_EOL;
