@@ -119,15 +119,6 @@ class AlltronImportProducts extends AlltronImport
 
 			$i++;
 
-			// if ($i == 10)
-			// 	break;
-
-			// var_dump(
-			// 	$this->productData
-			// );
-			// echo '<hr>';
-			// continue;
-
 			$productSupplier = ProductSupplier::firstOrNew([
 				'supplier_product_id' => $this->getProductDataValue('ProductId'), 
 				'supplier_id' => 1
@@ -142,7 +133,7 @@ class AlltronImportProducts extends AlltronImport
 				'weight_brutto' => $this->getProductsWeight(),
 				'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
 				'manufacturer_number' => $this->getProductDataValue('MPN'),
-				'manufacturer_url' => $this->getProductDataValue('ManufacturerProductUrl'),
+				'manufacturer_url' => substr($this->getProductDataValue('ManufacturerProductUrl'), 0, 599),
 			);
 
 			if ($this->getManufacturerName()) {
