@@ -3,7 +3,6 @@
 namespace Supsign\Alltron;
 
 use Illuminate\Support\Facades\Storage;
-use Supsign\LaravelMfSoap\MyFactorySoapApi;
 use Supsign\LaravelXmlReader\XmlReader;
 
 class AlltronImport extends XmlReader
@@ -12,7 +11,7 @@ class AlltronImport extends XmlReader
 
 	public function __construct()
 	{
-		$this->soap = new MyFactorySoapApi;
+		$this->soap = resolve('MyFactorySoapApi');
 	}
 
 	public function downloadFile()
