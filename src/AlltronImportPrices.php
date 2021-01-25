@@ -26,6 +26,9 @@ class AlltronImportPrices extends AlltronImport
 			if (!$productSupplier)
 				continue;
 
+			$productSupplier->product->recommended_retail_price = $entry->price->ECPR;
+			$productSupplier->product->save();
+
 			$vat = VAT::where('rate', $entry->price->VATR)->first();
 
 			if (!$vat) {
