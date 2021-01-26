@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Storage;
 class AlltronImportPrices extends AlltronImport
 {
 	protected 
+		$logFile = 'AlltronPriceLog.txt',
 		$dataKey = 'item',
 		$sourceFile = 'PreisdatenV2.XML';
 
 	public function import() 
 	{
 		$this->downloadFile();
+		$this->writeLog($this->sourceFile.' download complete');
 
 		$i = 0;
 
@@ -46,6 +48,6 @@ class AlltronImportPrices extends AlltronImport
 			$i++;
 		}
 
-		echo $i.' prices imported or update'.PHP_EOL;
+		$this->writeLog($i.' prices imported or update');
 	}
 }

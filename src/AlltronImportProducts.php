@@ -15,6 +15,7 @@ use Pdp\TopLevelDomains;
 class AlltronImportProducts extends AlltronImport
 {
 	protected 
+		$logFile = 'AlltronProductLog.txt',
 		$dataKey = 'product',
 		$productData = null,
 		$sourceFile = 'StandardV2_DE.xml',
@@ -65,10 +66,13 @@ class AlltronImportProducts extends AlltronImport
 	public function import() 
 	{
 		return $this
+			->writeLog('Starting Alltron Product Import')
 			->importSuppliers()
 			->downloadFile()
+			->writeLog($this->sourceFile.' download complete')
 			->importProducts()
-			->writeMfIds();
+			->writeMfIds()
+			->writeLog('Alltron Product Import finished');
 	}
 
 	public function importSuppliers()
@@ -80,9 +84,7 @@ class AlltronImportProducts extends AlltronImport
             );
         }
 
-        echo 'Lieferanten importiert.'.PHP_EOL;
-
-        return $this;
+        return $this->writeLog('Lieferanten importiert.');
 	}
 
 	public function importProducts() 
@@ -92,93 +94,99 @@ class AlltronImportProducts extends AlltronImport
 		$i = 0;
 
 		foreach ($this->getData() AS $this->productData) {
-			$ignore = false;
+			try {
+				$ignore = false;
 
-			if (isset($this->productData->Categories)) {
-				$categoryId = null;
+				if (isset($this->productData->Categories)) {
+					$categoryId = null;
 
-				foreach ($this->productData->Categories->Category AS $category) {
-					$categoryData = ['name' => $category];
+					foreach ($this->productData->Categories->Category AS $category) {
+						$categoryData = ['name' => $category];
 
-					if (isset($categoryId)) {
-						$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
-					}
+						if (isset($categoryId)) {
+							$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
+						}
 
-					$category = Category::firstOrCreate($categoryData);
-					$categoryId = $category->id;
+						$category = Category::firstOrCreate($categoryData);
+						$categoryId = $category->id;
 
-					if ($category->ignore) {
-						$ignore = true;
+						if ($category->ignore) {
+							$ignore = true;
+						}
 					}
 				}
-			}
 
-			if ($ignore OR $catCount === 0) {
-				continue;
-			}
+				if ($ignore OR $catCount === 0) {
+					continue;
+				}
 
-			$i++;
+				$this->writeLog('Starting to write Product: '.$this->getProductDataValue('ProductName').' - '.$this->getProductDataValue('MPN'));
 
-			$productSupplier = ProductSupplier::firstOrNew([
-				'supplier_product_id' => $this->getProductDataValue('ProductId'), 
-				'supplier_id' => 1
-			]);
+				$i++;
 
-			$productData = array(
-				'ean' => $this->getProductDataValue('EAN'),
-				'warranty' => $this->getProductDataValue('Warranty'),
-				'height' => $this->getProductDataValue('height'),
-				'width' => $this->getProductsWeight('width'),
-				'length' => $this->getProductDataValue('length'),
-				'weight_brutto' => $this->getProductsWeight(),
-				'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
-				'manufacturer_number' => $this->getProductDataValue('MPN'),
-				'manufacturer_url' => substr($this->getProductDataValue('ManufacturerProductUrl'), 0, 599),
-			);
-
-			if ($this->getManufacturerName()) {
-				$productData['manufacturer_id'] = Manufacturer::firstOrCreate([
-					'name' => $this->getManufacturerName()
-				])->id;
-			}
-
-			if (is_null($productSupplier->product_id)) {
-				$product = Product::create($productData); 
-			} else {
-				$product = Product::find($productSupplier->product_id)->fill($productData);
-				$product->save();
-			}
-
-			$productSupplier->product_id = $product->id;
-			$productSupplier->stock = $this->getProductDataValue('Inventory');
-			$productSupplier->last_seen = now();
-			$productSupplier->save();
-
-			$description = ProductDescription::updateOrCreate(
-				['product_id' => $product->id],
-				[
-					'name' => $this->getProductDataValue('ProductName'),
-					'subtitle' => $this->getProductDataValue('Productsubtitle'),
-					'teaser' => $this->getProductDataValue('ProductLongDescription'),
-				]
-			);
-
-			if (isset($categoryId)) {
-				CategoryProduct::firstOrCreate([
-					'product_id' => $product->id,
-					'category_id' => $categoryId
+				$productSupplier = ProductSupplier::firstOrNew([
+					'supplier_product_id' => $this->getProductDataValue('ProductId'), 
+					'supplier_id' => 1
 				]);
+
+				$productData = array(
+					'ean' => $this->getProductDataValue('EAN'),
+					'warranty' => $this->getProductDataValue('Warranty'),
+					'height' => $this->getProductDataValue('height'),
+					'width' => $this->getProductsWeight('width'),
+					'length' => $this->getProductDataValue('length'),
+					'weight_brutto' => $this->getProductsWeight(),
+					'is_active' => $this->getProductDataValue('isSellOut') === 'false' ? 1 : 0,
+					'manufacturer_number' => $this->getProductDataValue('MPN'),
+					'manufacturer_url' => substr($this->getProductDataValue('ManufacturerProductUrl'), 0, 599),
+				);
+
+				if ($this->getManufacturerName()) {
+					$productData['manufacturer_id'] = Manufacturer::firstOrCreate([
+						'name' => $this->getManufacturerName()
+					])->id;
+				}
+
+				if (is_null($productSupplier->product_id)) {
+					$product = Product::create($productData); 
+				} else {
+					$product = Product::find($productSupplier->product_id)->fill($productData);
+					$product->save();
+				}
+
+				$productSupplier->product_id = $product->id;
+				$productSupplier->stock = $this->getProductDataValue('Inventory');
+				$productSupplier->last_seen = now();
+				$productSupplier->save();
+
+				$description = ProductDescription::updateOrCreate(
+					['product_id' => $product->id],
+					[
+						'name' => $this->getProductDataValue('ProductName'),
+						'subtitle' => $this->getProductDataValue('Productsubtitle'),
+						'teaser' => $this->getProductDataValue('ProductLongDescription'),
+					]
+				);
+
+				if (isset($categoryId)) {
+					CategoryProduct::firstOrCreate([
+						'product_id' => $product->id,
+						'category_id' => $categoryId
+					]);
+				}
+			} catch (\Exception $e) {
+				$this->writeLog('Caught exception: '.$e->getMessage());
 			}
 		}
 
-		echo $i.' rows imported or updated'.PHP_EOL;
-
-		return $this;
+		return $this->writeLog($i.' rows imported or updated');
 	}
 
 	public function writeMfIds() 
 	{
 		$i = 0;
+
+		$this->writeLog('Matching Products to MF');
 
         foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
             if (!$productSupplierInformation->ProductPurchaseNumber)
@@ -196,8 +204,6 @@ class AlltronImportProducts extends AlltronImport
             }
         }
 
-        echo $i.' rows found in MF'.PHP_EOL;
-
-        return $this;
+        return $this->writeLog($i.' rows found in MF');
 	}
 }
