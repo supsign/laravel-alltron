@@ -68,6 +68,7 @@ class AlltronImportProducts extends AlltronImport
 		return $this
 			->writeLog('Starting Alltron Product Import')
 			->importSuppliers()
+			->writeLog('Start Downloading: '.$this->sourceFile)
 			->downloadFile()
 			->writeLog($this->sourceFile.' download complete')
 			->importProducts()
