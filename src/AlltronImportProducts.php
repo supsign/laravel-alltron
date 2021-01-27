@@ -204,15 +204,21 @@ class AlltronImportProducts extends AlltronImport
             if (!$productSupplierInformation->ProductPurchaseNumber)
                 continue;
 
-            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
-                ->with(['product'])
-                ->first();
+            $this->writeLog('Starting to match MF Product: '.$productSupplierInformation->ProductPurchaseNumber);
 
-            if ($productSupplier) {
-                $product = $productSupplier->product;
-                $product->mf_product_id = $productSupplierInformation->ProductID;
-                $product->save();
-                $i++;
+            try {
+	            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
+	                ->with(['product'])
+	                ->first();
+
+	            if ($productSupplier) {
+	                $product = $productSupplier->product;
+	                $product->mf_product_id = $productSupplierInformation->ProductID;
+	                $product->save();
+	                $i++;
+	            }
+            } catch (Exception $e) {
+            	$this->writeLog('Caught exception: '.$e->getMessage());
             }
         }
 
