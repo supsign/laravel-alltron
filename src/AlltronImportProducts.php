@@ -76,7 +76,6 @@ class AlltronImportProducts extends AlltronImport
 				->downloadFile()
 				->writeLog($this->sourceFile.' download complete')
 				->importProducts()
-				->writeMfIds()
 				->writeLog('Alltron Product Import finished');
 		} catch (Exception $e) {
 			$this->tracker->stop();
@@ -192,36 +191,5 @@ class AlltronImportProducts extends AlltronImport
 		}
 
 		return $this->writeLog($i.' rows imported or updated');
-	}
-
-	public function writeMfIds() 
-	{
-		$i = 0;
-
-		$this->writeLog('Matching Products to MF');
-
-        foreach ($this->soap->getProductSupplierInformation(['SupplierID' => 1]) AS $productSupplierInformation) {
-            if (!$productSupplierInformation->ProductPurchaseNumber)
-                continue;
-
-            $this->writeLog('Starting to match MF Product: '.$productSupplierInformation->ProductPurchaseNumber);
-
-            try {
-	            $productSupplier = ProductSupplier::where('supplier_product_id', $productSupplierInformation->ProductPurchaseNumber)
-	                ->with(['product'])
-	                ->first();
-
-	            if ($productSupplier) {
-	                $product = $productSupplier->product;
-	                $product->mf_product_id = $productSupplierInformation->ProductID;
-	                $product->save();
-	                $i++;
-	            }
-            } catch (Exception $e) {
-            	$this->writeLog('Caught exception: '.$e->getMessage());
-            }
-        }
-
-        return $this->writeLog($i.' rows found in MF');
 	}
 }
