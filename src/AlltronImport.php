@@ -2,6 +2,7 @@
 
 namespace Supsign\Alltron;
 
+use App\CronTracker;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Supsign\LaravelXmlReader\XmlReader;
@@ -12,11 +13,13 @@ class AlltronImport extends XmlReader
 		$logFile = 'AlltronLog.txt',
 		$logPath = 'logs/',
 		$downloadPath = 'imports/',
-		$soap = null;
+		$soap = null,
+		$tracker = null;
 
 	public function __construct()
 	{
 		$this->soap = resolve('MyFactorySoapApi');
+		$this->tracker = CronTracker::firstOrCreate(['name' => static::class]);
 	}
 
 	public function downloadFile()

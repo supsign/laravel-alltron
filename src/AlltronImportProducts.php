@@ -9,6 +9,7 @@ use App\Product;
 use App\ProductDescription;
 use App\ProductSupplier;
 use App\Supplier;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Pdp\TopLevelDomains;
 
@@ -65,15 +66,25 @@ class AlltronImportProducts extends AlltronImport
 
 	public function import() 
 	{
-		return $this
-			->writeLog('Starting Alltron Product Import')
-			->importSuppliers()
-			->writeLog('Start Downloading: '.$this->sourceFile)
-			->downloadFile()
-			->writeLog($this->sourceFile.' download complete')
-			->importProducts()
-			->writeMfIds()
-			->writeLog('Alltron Product Import finished');
+		$this->tracker->start();
+
+		try {
+			$this
+				->writeLog('Starting Alltron Product Import')
+				->importSuppliers()
+				->writeLog('Start Downloading: '.$this->sourceFile)
+				->downloadFile()
+				->writeLog($this->sourceFile.' download complete')
+				->importProducts()
+				->writeMfIds()
+				->writeLog('Alltron Product Import finished');
+		} catch (Exception $e) {
+			$this->tracker->stop();
+		}
+
+		$this->tracker->complete();
+
+		return $this;
 	}
 
 	public function importSuppliers()
@@ -175,7 +186,7 @@ class AlltronImportProducts extends AlltronImport
 						'category_id' => $categoryId
 					]);
 				}
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
 			}
 		}
