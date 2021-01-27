@@ -19,7 +19,7 @@ class AlltronImport extends XmlReader
 	public function __construct()
 	{
 		$this->soap = resolve('MyFactorySoapApi');
-		$this->tracker = CronTracker::firstOrCreate(['name' => static::class]);
+		$this->tracker = CronTracker::firstOrCreate(['class' => static::class]);
 	}
 
 	public function downloadFile()
