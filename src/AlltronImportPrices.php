@@ -31,7 +31,7 @@ class AlltronImportPrices extends AlltronImport
 		$this->tracker->start();
 		$this
 			->writeLog('Start Downloading: '.$this->sourceFile)
-			// ->downloadFile()
+			->downloadFile()
 			->writeLog($this->sourceFile.' download complete');
 
 		$i = 0;
