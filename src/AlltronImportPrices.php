@@ -40,7 +40,7 @@ class AlltronImportPrices extends AlltronImport
 			try {
 				$productSupplier = ProductSupplier::where('supplier_product_id', $entry->LITM)->first();
 
-				if (!$productSupplier)
+				if (!$productSupplier OR !$productSupplier->product->mf_product_id)
 					continue;
 
 				$this->writeLog('Starting to write Price for: '.$productSupplier->product->name.' - '.$productSupplier->supplier_product_id);
