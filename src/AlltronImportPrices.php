@@ -65,6 +65,7 @@ class AlltronImportPrices extends AlltronImport
 				$i++;
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
+				$this->tracker->error();
 			}
 		}
 
