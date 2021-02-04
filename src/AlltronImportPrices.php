@@ -28,7 +28,6 @@ class AlltronImportPrices extends AlltronImport
 
 	public function importPrices() 
 	{
-		$this->tracker->start();
 		$this
 			->writeLog('Start Downloading: '.$this->sourceFile)
 			->downloadFile()

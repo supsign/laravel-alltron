@@ -66,8 +66,6 @@ class AlltronImportProducts extends AlltronImport
 
 	public function import() 
 	{
-		$this->tracker->start();
-
 		try {
 			$this
 				->writeLog('Starting Alltron Product Import')
