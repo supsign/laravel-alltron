@@ -20,7 +20,7 @@ class AlltronImportPrices extends AlltronImport
 		try {
 			$this->importPrices();
 		} catch (Exception $e) {
-			$this->tracker->stop();
+			$this->tracker->error()->stop();
 		}
 
 		return $this;
