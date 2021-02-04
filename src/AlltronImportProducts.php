@@ -88,6 +88,8 @@ class AlltronImportProducts extends AlltronImport
 
 	public function importSuppliers()
 	{
+		$this->tracker->importing();
+
         foreach ($this->soap->getSuppliers() AS $supplier) {
             Supplier::updateOrCreate(
                 ['my_factory_id' => (int)filter_var($supplier->SupplierNumber, FILTER_SANITIZE_NUMBER_INT)],
@@ -104,7 +106,10 @@ class AlltronImportProducts extends AlltronImport
 
 		$i = 0;
 
+		$this->tracker->parsing();
+
 		foreach ($this->getData() AS $this->productData) {
+			$this->tracker->importing();
 			try {
 				$ignore = false;
 

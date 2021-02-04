@@ -24,6 +24,8 @@ class AlltronImport extends XmlReader
 
 	public function downloadFile()
 	{
+		$this->tracker->downloading();
+
 	    (new AlltronFTP)
 	        ->setLocalFile(Storage::path($this->downloadPath.$this->sourceFile))
 	        ->setRemoteFile($this->sourceFile)
