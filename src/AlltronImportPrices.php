@@ -35,10 +35,11 @@ class AlltronImportPrices extends AlltronImport
 			->writeLog($this->sourceFile.' download complete');
 
 		$i = 0;
-		$this->tracker->parsing();
+		$data = $this->getData();
+		$this->tracker->setProgressTarget(count($data))->parsing();
 
-		foreach ($this->getData() AS $entry) {
-			$this->tracker->importing();
+		foreach ($data AS $entry) {
+			$this->tracker->importing()->progress();
 			try {
 				$productSupplier = ProductSupplier::where('supplier_product_id', $entry->LITM)->first();
 
