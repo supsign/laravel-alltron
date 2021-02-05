@@ -105,11 +105,12 @@ class AlltronImportProducts extends AlltronImport
 
 		$i = 0;
 
+		$this->tracker->parsing();
 		$data = $this->getData();
-		$this->tracker->setProgressTarget(count($data))->parsing();
+		$this->tracker->setProgressTarget(count($data))->importing();
 
 		foreach ($data AS $this->productData) {
-			$this->tracker->importing()->progress();
+			$this->tracker->progress();
 			try {
 				$ignore = false;
 
