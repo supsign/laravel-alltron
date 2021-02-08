@@ -72,7 +72,15 @@ class AlltronImportProducts extends AlltronImport
 				->importSuppliers()
 				->writeLog('Start Downloading: '.$this->sourceFile)
 				->downloadFile()
-				->writeLog($this->sourceFile.' download complete')
+				->writeLog($this->sourceFile.' download complete');
+		} catch (Exception $e) {
+			$this->writeLog('Caught exception: '.$e->getMessage());
+			$this->tracker->stop();
+			return $this;
+		}
+
+		try {
+			$this
 				->importProducts()
 				->writeLog('Alltron Product Import finished');
 		} catch (Exception $e) {
