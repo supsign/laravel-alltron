@@ -34,6 +34,14 @@ class AlltronImport extends XmlReader
 	    return $this;
 	}
 
+	public function readyToRun()
+	{
+		if ($this->tracker->in_progress)
+			return false;
+
+		return $tracker->last_completed->diffInMinutes(Carbon::now()) > $tracker->execution_interval;
+	}
+
 	public function writeLog($data)
 	{
 		if (!is_array($data))

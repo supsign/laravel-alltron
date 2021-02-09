@@ -17,6 +17,9 @@ class AlltronImportPrices extends AlltronImport
 
 	public function import()
 	{
+		if (!$this->readyToRun())
+			return $this;
+
 		try {
 			$this->importPrices();
 		} catch (Exception $e) {
