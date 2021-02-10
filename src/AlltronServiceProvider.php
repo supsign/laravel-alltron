@@ -6,14 +6,6 @@ use Illuminate\Support\ServiceProvider;
 
 class AlltronServiceProvider extends ServiceProvider
 {
-
-    public function boot() 
-    {
-
-    }
-
-    public function register()
-    {
-
-    }
+	public function boot() {}
+	public function register() {}
 }
