@@ -130,7 +130,7 @@ class AlltronImportProducts extends AlltronImport
 					$categoryId = null;
 
 					foreach ($this->productData->Categories->Category AS $category) {
-						$categoryData = ['name' => $category];
+						$categoryData = ['alltron_name' => $category];
 
 						if (isset($categoryId)) {
 							$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
