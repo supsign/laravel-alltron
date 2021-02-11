@@ -25,7 +25,10 @@ class AlltronImportPrices extends AlltronImport
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
 			$this->tracker->error()->stop();
+			return $this;
 		}
+
+		$this->tracker->complete();
 
 		return $this;
 	}
@@ -83,7 +86,6 @@ class AlltronImportPrices extends AlltronImport
 		}
 
 		$this->writeLog($i.' prices imported or update');
-		$this->tracker->complete();
 
 		return $this;
 	}

@@ -78,7 +78,7 @@ class AlltronImportProducts extends AlltronImport
 				->writeLog($this->sourceFile.' download complete');
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->stop();
+			$this->tracker->error();
 			return $this;
 		}
 
@@ -88,7 +88,7 @@ class AlltronImportProducts extends AlltronImport
 				->writeLog('Alltron Product Import finished');
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker()->stop();
+			$this->tracker()->error()->stop();
 			return $this;
 		}
 
