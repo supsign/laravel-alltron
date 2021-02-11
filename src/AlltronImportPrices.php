@@ -76,9 +76,7 @@ class AlltronImportPrices extends AlltronImport
 				$vat = VAT::where('rate', $entry->price->VATR)->first();
 
 				if (!$vat) {
-					var_dump($vat, $entry->price->VATR);
-
-					throw new \Exception('Tax Rate not found', 1);
+					throw new Exception('Tax Rate "'.$entry->price->VATR.'" not found', 1);
 				}
 
 				$price = Price::firstOrCreate([
