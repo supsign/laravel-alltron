@@ -42,7 +42,7 @@ class AlltronImportPrices extends AlltronImport
 				->writeLog($this->sourceFile.' download complete');
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->stop();
+			$this->tracker->error()->stop();
 			return $this;
 		}
 
