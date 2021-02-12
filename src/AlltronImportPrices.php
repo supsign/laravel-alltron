@@ -20,6 +20,9 @@ class AlltronImportPrices extends AlltronImport
 		if (!$this->tracker->readyToRun())
 			return $this;
 
+		$this->tracker->start();
+		Storage::delete($this->logPath.$this->logFile);
+
 		try {
 			$this->importPrices();
 		} catch (Exception $e) {
