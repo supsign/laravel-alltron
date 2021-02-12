@@ -71,7 +71,6 @@ class AlltronImportProducts extends AlltronImport
 
 		try {
 			$this
-				->writeLog('Starting Alltron Product Import')
 				->importSuppliers()
 				->writeLog('Start Downloading: '.$this->sourceFile)
 				->downloadFile()
@@ -130,7 +129,7 @@ class AlltronImportProducts extends AlltronImport
 					$categoryId = null;
 
 					foreach ($this->productData->Categories->Category AS $category) {
-						$categoryData = ['alltron_name' => $category];
+						$categoryData = ['name' => $category];
 
 						if (isset($categoryId)) {
 							$categoryData = array_merge($categoryData, ['parent_id' => $categoryId]);
@@ -172,7 +171,7 @@ class AlltronImportProducts extends AlltronImport
 
 				if ($this->getManufacturerName()) {
 					$productData['manufacturer_id'] = Manufacturer::firstOrCreate([
-						'name' => $this->getManufacturerName()
+						'alltron_name' => $this->getManufacturerName()
 					])->id;
 				}
 
