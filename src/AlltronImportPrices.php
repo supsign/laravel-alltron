@@ -85,7 +85,7 @@ class AlltronImportPrices extends AlltronImport
 				$i++;
 
 				if ($productSupplier->prices->last())
-					if ($productSupplier->prices->last()->amount == $this->line['NetPrice'])
+					if ($productSupplier->prices->last()->amount == $entry->price->EXPR)
 						continue;
 
 				$price = Price::create([
