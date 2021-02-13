@@ -38,29 +38,14 @@ class AlltronImportPrices extends AlltronImport
 
 	public function importPrices() 
 	{
-		try {
-			$this
-				->writeLog('Start Downloading: '.$this->sourceFile)
-				->downloadFile()
-				->writeLog($this->sourceFile.' download complete');
-		} catch (Exception $e) {
-			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->stop();
-			return $this;
-		}
+		$this
+			->writeLog('Start Downloading: '.$this->sourceFile)
+			->downloadFile()
+			->writeLog($this->sourceFile.' download complete');
 
 		$i = 0;
-
 		$this->tracker->parsing();
-		
-		try {
-			$data = $this->getData();
-		} catch (Exception $e) {
-			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->error()->stop();
-			return $this;
-		}
-
+		$data = $this->getData();
 		$this->tracker->setProgressTarget(count($data))->importing();
 
 		foreach ($data AS $entry) {
