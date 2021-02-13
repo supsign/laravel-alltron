@@ -82,13 +82,17 @@ class AlltronImportPrices extends AlltronImport
 					throw new Exception('Tax Rate "'.$entry->price->VATR.'" not found', 1);
 				}
 
-				$price = Price::firstOrCreate([
+				$i++;
+
+				if ($productSupplier->prices->last())
+					if ($productSupplier->prices->last()->amount == $this->line['NetPrice'])
+						continue;
+
+				$price = Price::create([
 					'product_supplier_id' => $productSupplier->id,
 					'amount' => $entry->price->EXPR,
 					'vat_id' => $vat->id,
 				]);
-
-				$i++;
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
 				$this->tracker->error();
