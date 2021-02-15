@@ -51,7 +51,10 @@ class AlltronImportPrices extends AlltronImport
 		foreach ($data AS $entry) {
 			$this->tracker->progress();
 			try {
-				$productSupplier = ProductSupplier::where('supplier_product_id', $entry->LITM)->first();
+				$productSupplier = ProductSupplier::where([
+					'supplier_product_id' => $entry->LITM,
+					'supplier_id' => 1
+				])->first();
 
 				if (!$productSupplier OR !$productSupplier->product->mf_product_id)
 					continue;

@@ -160,6 +160,9 @@ class AlltronImportProducts extends AlltronImport
 					'supplier_id' => 1
 				]);
 
+				if (!$productSupplier->id)
+					$productSupplier->main_supplier = 1;
+
 				$productData = array(
 					'ean' => $this->getProductDataValue('EAN'),
 					'warranty' => $this->getProductDataValue('Warranty'),
