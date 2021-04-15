@@ -84,6 +84,10 @@ class AlltronImportProducts extends AlltronImport
 			return $this;
 		}
 
+		$filePath = Storage::path($this->sourceFolder.'/'.$this->sourceFile);
+		$data = file_get_contents($filePath);
+		file_put_contents($filePath, str_replace('<?xml version="1.1" encoding="UTF-8" standalone="no"?>', '<?xml version="1.0" encoding="UTF-8" standalone="no"?>', $data));
+
 		try {
 			$this
 				->importProducts()
