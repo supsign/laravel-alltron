@@ -14,6 +14,7 @@ class AlltronImport extends XmlReader
 		$logPath = 'logs/',
 		$downloadPath = 'imports/',
 		$soap = null,
+		$sourceFolder = 'dataexport',
 		$tracker = null;
 
 	public function __construct()

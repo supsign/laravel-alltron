@@ -197,7 +197,7 @@ class AlltronImportProducts extends AlltronImport
 				$productSupplier->last_seen = now();
 				$productSupplier->save();
 
-				$description = ProductDescription::updateOrCreate(
+				ProductDescription::updateOrCreate(
 					['product_id' => $product->id],
 					[
 						'name' => $this->getProductDataValue('ProductName'),
