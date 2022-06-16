@@ -14,7 +14,6 @@ class AlltronImport extends XmlReader
 		$logPath = 'logs/',
 		$downloadPath = 'imports/',
 		$soap = null,
-		$sourceFolder = 'dataexport',
 		$tracker = null;
 
 	public function __construct()
@@ -29,6 +28,7 @@ class AlltronImport extends XmlReader
 
 	    (new AlltronFTP)
 	        ->setLocalFile(Storage::path($this->downloadPath.$this->sourceFile))
+	        ->setRemoteDirectory('dataexport')
 	        ->setRemoteFile($this->sourceFile)
 	        ->downloadFile();
 
