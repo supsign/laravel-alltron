@@ -45,11 +45,7 @@ class AlltronImportProducts extends AlltronImport
 
 	protected function getProductDataValue($key)
 	{
-		if (!isset($this->productData->$key) OR is_object($this->productData->$key)) {
-			return null;
-		}
-
-		return $this->productData->$key;
+		return get_object_vars($this->productData->$key)[0] ?? null;
 	}
 
 	protected function getProductsWeight()
