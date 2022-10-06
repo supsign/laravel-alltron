@@ -5,6 +5,7 @@ namespace Supsign\Alltron;
 use App\Price;
 use App\ProductSupplier;
 use App\Vat;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
@@ -64,7 +65,7 @@ class AlltronImportPrices extends AlltronImport
 				$productSupplier->product->recommended_retail_price = $entry->price->ECPR;
 				$productSupplier->product->save();
 
-				$vat = VAT::where('rate', $entry->price->VATR)->first();
+				$vat = Vat::where('rate', $entry->price->VATR)->first();
 
 				if (!$vat) {
 					throw new Exception('Tax Rate "'.$entry->price->VATR.'" not found', 1);
@@ -72,15 +73,18 @@ class AlltronImportPrices extends AlltronImport
 
 				$i++;
 
-				if ($productSupplier->prices->last())
-					if ($productSupplier->prices->last()->amount == $entry->price->EXPR)
-						continue;
+				if ($productSupplier->prices->last() && $productSupplier->prices->last()->amount == $entry->price->EXPR) {
+					continue;
+				}
 
-				$price = Price::create([
+				Price::create([
 					'product_supplier_id' => $productSupplier->id,
 					'amount' => $entry->price->EXPR,
 					'vat_id' => $vat->id,
 				]);
+
+				$productSupplier->product->updated_at = Carbon::now();
+				$productSupplier->product->save();
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
 				$this->tracker->error();
