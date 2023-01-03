@@ -82,9 +82,6 @@ class AlltronImportPrices extends AlltronImport
 					'amount' => $entry->price->EXPR,
 					'vat_id' => $vat->id,
 				]);
-
-				$productSupplier->product->updated_at = Carbon::now();
-				$productSupplier->product->save();
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
 				$this->tracker->error();
