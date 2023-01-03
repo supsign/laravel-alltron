@@ -5,7 +5,6 @@ namespace Supsign\Alltron;
 use App\Price;
 use App\ProductSupplier;
 use App\Vat;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,8 +17,9 @@ class AlltronImportPrices extends AlltronImport
 
 	public function import()
 	{
-		if (!$this->tracker->readyToRun())
+		if (!$this->tracker->readyToRun()) {
 			return $this;
+		}
 
 		$this->tracker->start();
 		Storage::delete($this->logPath.$this->logFile);
@@ -29,6 +29,7 @@ class AlltronImportPrices extends AlltronImport
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
 			$this->tracker->stop();
+
 			return $this;
 		}
 
@@ -51,18 +52,20 @@ class AlltronImportPrices extends AlltronImport
 
 		foreach ($data AS $entry) {
 			$this->tracker->progress();
+
 			try {
 				$productSupplier = ProductSupplier::where([
 					'supplier_product_id' => $entry->LITM,
 					'supplier_id' => 1
 				])->first();
 
-				if (!$productSupplier OR !$productSupplier->product->mf_product_id)
+				if (!$productSupplier OR !$productSupplier->product->mf_product_id) {
 					continue;
+				}
 
 				$this->writeLog('Starting to write Price for: '.$productSupplier->product->name.' - '.$productSupplier->supplier_product_id);
 
-				$productSupplier->product->recommended_retail_price = $entry->price->ECPR;
+				$productSupplier->product->recommended_retail_price = (float)$entry->price->ECPR;
 				$productSupplier->product->save();
 
 				$vat = Vat::where('rate', $entry->price->VATR)->first();
