@@ -2,7 +2,6 @@
 
 namespace Supsign\Alltron;
 
-use App\Price;
 use App\ProductSupplier;
 use App\Vat;
 use Exception;
@@ -80,8 +79,7 @@ class AlltronImportPrices extends AlltronImport
 					continue;
 				}
 
-				Price::create([
-					'product_supplier_id' => $productSupplier->id,
+				$productSupplier->prices()->create([
 					'amount' => $entry->price->EXPR,
 					'vat_id' => $vat->id,
 				]);
