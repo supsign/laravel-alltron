@@ -190,8 +190,8 @@ class AlltronImportProducts extends AlltronImport
 
 				$productSupplier->product_id = $product->id;
 				$productSupplier->stock = $this->getProductDataValue('Inventory');
-				$productSupplier->last_seen = now();
 				$productSupplier->save();
+				$productSupplier->setLastSeen();
 
 				ProductDescription::updateOrCreate(
 					['product_id' => $product->id],
