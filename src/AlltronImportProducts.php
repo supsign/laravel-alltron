@@ -62,10 +62,6 @@ class AlltronImportProducts extends AlltronImport
 
 	public function import() 
 	{
-		if (!$this->tracker->readyToRun())
-			return $this;
-
-		$this->tracker->start();
 		Storage::delete($this->logPath.$this->logFile);
 
 		try {
@@ -76,7 +72,6 @@ class AlltronImportProducts extends AlltronImport
 				->writeLog($this->sourceFile.' download complete');
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->stop();
 			return $this;
 		}
 
@@ -90,19 +85,14 @@ class AlltronImportProducts extends AlltronImport
 				->writeLog('Alltron Product Import finished');
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->error()->stop();
 			return $this;
 		}
-
-		$this->tracker->complete();
 
 		return $this;
 	}
 
 	public function importSuppliers()
 	{
-		$this->tracker->importing();
-
         foreach ($this->soap->getSuppliers() AS $supplier) {
             Supplier::updateOrCreate(
                 ['my_factory_id' => (int)filter_var($supplier->SupplierNumber, FILTER_SANITIZE_NUMBER_INT)],
@@ -116,15 +106,10 @@ class AlltronImportProducts extends AlltronImport
 	public function importProducts() 
 	{
 		$catCount = Category::all()->count();
-
+		$data = $this->getData();
 		$i = 0;
 
-		$this->tracker->parsing();
-		$data = $this->getData();
-		$this->tracker->setProgressTarget(count($data))->importing();
-
 		foreach ($data AS $this->productData) {
-			$this->tracker->progress();
 			try {
 				$ignore = false;
 
@@ -210,7 +195,6 @@ class AlltronImportProducts extends AlltronImport
 				}
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
-				$this->tracker->error();
 			}
 		}
 

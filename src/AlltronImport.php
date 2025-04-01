@@ -2,7 +2,6 @@
 
 namespace Supsign\Alltron;
 
-use App\CronTracker;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Supsign\LaravelXmlReader\XmlReader;
@@ -13,19 +12,15 @@ class AlltronImport extends XmlReader
 		$logFile = 'AlltronLog.txt',
 		$logPath = 'logs/',
 		$downloadPath = 'imports/',
-		$soap = null,
-		$tracker = null;
+		$soap = null;
 
 	public function __construct()
 	{
 		$this->soap = resolve('MyFactorySoapApi');
-		$this->tracker = CronTracker::firstOrCreate(['class' => static::class]);
 	}
 
 	public function downloadFile()
 	{
-		$this->tracker->downloading();
-
 	    (new AlltronFTP)
 	        ->setLocalFile(Storage::path($this->downloadPath.$this->sourceFile))
 	        ->setRemoteDirectory('dataexport')
@@ -37,11 +32,13 @@ class AlltronImport extends XmlReader
 
 	public function writeLog($data)
 	{
-		if (!is_array($data))
+		if (!is_array($data)) {
 			$data = [$data];
+		}
 
-		foreach ($data AS $line)
+		foreach ($data AS $line) {
 			$this->writeLogLine($line);
+		}
 
 		return $this;
 	}

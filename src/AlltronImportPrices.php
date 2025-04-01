@@ -16,23 +16,15 @@ class AlltronImportPrices extends AlltronImport
 
 	public function import()
 	{
-		if (!$this->tracker->readyToRun()) {
-			return $this;
-		}
-
-		$this->tracker->start();
 		Storage::delete($this->logPath.$this->logFile);
 
 		try {
 			$this->importPrices();
 		} catch (Exception $e) {
 			$this->writeLog('Caught exception: '.$e->getMessage());
-			$this->tracker->stop();
 
 			return $this;
 		}
-
-		$this->tracker->complete();
 
 		return $this;
 	}
@@ -45,13 +37,8 @@ class AlltronImportPrices extends AlltronImport
 			->writeLog($this->sourceFile.' download complete');
 
 		$i = 0;
-		$this->tracker->parsing();
-		$data = $this->getData();
-		$this->tracker->setProgressTarget(count($data))->importing();
 
-		foreach ($data AS $entry) {
-			$this->tracker->progress();
-
+		foreach ($this->getData() AS $entry) {
 			try {
 				$productSupplier = ProductSupplier::where([
 					'supplier_product_id' => $entry->LITM,
@@ -85,7 +72,6 @@ class AlltronImportPrices extends AlltronImport
 				]);
 			} catch (Exception $e) {
 				$this->writeLog('Caught exception: '.$e->getMessage());
-				$this->tracker->error();
 			}
 		}
 
