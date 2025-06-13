@@ -178,11 +178,15 @@ class AlltronImportProducts extends AlltronImport
 				$productSupplier->save();
 				$productSupplier->setLastSeen();
 
+				$subtitle = substr($this->getProductDataValue('Productsubtitle'), 0, 100);
+				$search = ['–'];
+				$repalce = ['-'];
+
 				ProductDescription::updateOrCreate(
 					['product_id' => $product->id],
 					[
 						'name' => $this->getProductDataValue('ProductName'),
-						'subtitle' => $this->getProductDataValue('Productsubtitle'),
+						'subtitle' => str_replace($search, $repalce, $subtitle),
 						'teaser' => $this->getProductDataValue('ProductLongDescription'),
 					]
 				);
